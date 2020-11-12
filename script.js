@@ -33,7 +33,6 @@ function shuffle(array) {
 
 let shuffledColors = shuffle(COLORS);
 
-
 function createDivsForColors(colorArray) {
   for (let color of colorArray) {
     const newDiv = document.createElement("div");
@@ -44,8 +43,6 @@ function createDivsForColors(colorArray) {
     gameContainer.append(newDiv);
   }
 }
-
-
 
 function handleCardClick(event) {
   function chooseCards() {
@@ -58,14 +55,23 @@ function handleCardClick(event) {
     } else if (secondCard === null) {
       secondCard = chosenCard;
     }
-
+    
     if (firstCard && secondCard) {
       preventClicks = true;
     }
-
+    
     chosenCard.classList.add("revealed");
     chosenCard.style.backgroundColor = chosenCard.classList[0];
 
+    if (firstCard.className === secondCard.className) {
+      firstCard.removeEventListener('click', handleCardClick);
+      secondCard.removeEventListener('click', handleCardClick);
+      firstCard = null;
+      secondCard = null
+      preventClicks = false;
+    } else {
+      console.log('try again');
+    }
   }
   chooseCards();
 }
