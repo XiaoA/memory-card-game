@@ -67,10 +67,20 @@ function handleCardClick(event) {
       firstCard.removeEventListener('click', handleCardClick);
       secondCard.removeEventListener('click', handleCardClick);
       firstCard = null;
-      secondCard = null
+      secondCard = null;
       preventClicks = false;
     } else {
-      console.log('try again');
+      setTimeout(function() {
+        firstCard.style.backgroundColor = null;
+        firstCard.classList.remove("revealed");
+        firstCard = null;
+
+        secondCard.style.backgroundColor = null;
+        secondCard.classList.remove("revealed");
+        secondCard = null;
+
+        preventClicks = false;
+      }, 1000);
     }
   }
   chooseCards();
