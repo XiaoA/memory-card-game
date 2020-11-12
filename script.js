@@ -1,6 +1,7 @@
 const gameContainer = document.getElementById("game");
 let firstCard = null;
 let secondCard = null;
+let preventClicks = false;
 
 const COLORS = [
   "red",
@@ -44,21 +45,28 @@ function createDivsForColors(colorArray) {
   }
 }
 
+
+
 function handleCardClick(event) {
   function chooseCards() {
+    if (preventClicks) return;
+    
     let chosenCard = event.target;
 
     if (firstCard === null) {
       firstCard = chosenCard;
-      
     } else if (secondCard === null) {
       secondCard = chosenCard;
     }
 
+    if (firstCard && secondCard) {
+      preventClicks = true;
+    }
+
     chosenCard.classList.add("revealed");
     chosenCard.style.backgroundColor = chosenCard.classList[0];
-  }
 
+  }
   chooseCards();
 }
 
