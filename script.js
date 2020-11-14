@@ -45,24 +45,25 @@ function createDivsForColors(colorArray) {
 }
 
 function handleCardClick(event) {
-  function chooseCards() {
-    if (preventClicks) return;
-    
-    let chosenCard = event.target;
-
-    if (firstCard === null) {
+  if (preventClicks) return;
+  let chosenCard = event.target;
+  
+  const chooseCards = () => {
+   if (firstCard === null) {
       firstCard = chosenCard;
     } else if (secondCard === null) {
       secondCard = chosenCard;
     }
-    
-    if (firstCard && secondCard) {
-      preventClicks = true;
-    }
-    
+
     chosenCard.classList.add("revealed");
     chosenCard.style.backgroundColor = chosenCard.classList[0];
 
+    if (firstCard && secondCard) {
+      preventClicks = true;
+    }
+  }
+  
+  const checkForMatch = () => {
     if (firstCard.className === secondCard.className) {
       firstCard.removeEventListener('click', handleCardClick);
       secondCard.removeEventListener('click', handleCardClick);
@@ -84,6 +85,7 @@ function handleCardClick(event) {
     }
   }
   chooseCards();
+  checkForMatch();
 }
 
 createDivsForColors(shuffledColors);
