@@ -44,47 +44,55 @@ function createDivsForColors(colorArray) {
   }
 }
 
+const chooseCards = function(chosenCard) {
+  if (firstCard === null) {
+    firstCard = chosenCard;
+  } else if (secondCard === null) {
+    secondCard = chosenCard;
+  }
+
+  if (firstCard && secondCard) {
+    preventClicks = true;
+  }
+  
+  chosenCard.classList.add("revealed");
+  chosenCard.style.backgroundColor = chosenCard.classList[0];
+}
+
+const checkForMatch = function() {
+  if (firstCard.className === secondCard.className) {
+    removeEventListener();
+    preventClicks = false;
+  } else {
+    setTimeout(function() {
+      forgetChosenCards();
+      preventClicks = false;
+    }, 1000);
+  }
+}
+
+const removeEventListener = function() {
+  firstCard.removeEventListener('click', handleCardClick);
+  secondCard.removeEventListener('click', handleCardClick);
+  firstCard = null;
+  secondCard = null;
+}
+
+const forgetChosenCards = function() {
+  firstCard.style.backgroundColor = null;
+  firstCard.classList.remove("revealed");
+  firstCard = null;
+
+  secondCard.style.backgroundColor = null;
+  secondCard.classList.remove("revealed");
+  secondCard = null;
+}
+
 function handleCardClick(event) {
   if (preventClicks) return;
-  let chosenCard = event.target;
-  
-  const chooseCards = () => {
-   if (firstCard === null) {
-      firstCard = chosenCard;
-    } else if (secondCard === null) {
-      secondCard = chosenCard;
-    }
+  chosenCard = event.target;
 
-    chosenCard.classList.add("revealed");
-    chosenCard.style.backgroundColor = chosenCard.classList[0];
-
-    if (firstCard && secondCard) {
-      preventClicks = true;
-    }
-  }
-  
-  const checkForMatch = () => {
-    if (firstCard.className === secondCard.className) {
-      firstCard.removeEventListener('click', handleCardClick);
-      secondCard.removeEventListener('click', handleCardClick);
-      firstCard = null;
-      secondCard = null;
-      preventClicks = false;
-    } else {
-      setTimeout(function() {
-        firstCard.style.backgroundColor = null;
-        firstCard.classList.remove("revealed");
-        firstCard = null;
-
-        secondCard.style.backgroundColor = null;
-        secondCard.classList.remove("revealed");
-        secondCard = null;
-
-        preventClicks = false;
-      }, 1000);
-    }
-  }
-  chooseCards();
+  chooseCards(chosenCard);
   checkForMatch();
 }
 
