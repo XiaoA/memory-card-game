@@ -112,12 +112,14 @@ function setScore(newScore) {
   document.querySelector("#current-score").innerText = `Current Score: ${currentScore}`;
 }
 
-function endGame() {
-  finalScore = currentScore
+function printGameEndMsg() {
   document.querySelector("#final-score").innerText = `Final Score: ${finalScore}`;
   document.querySelector("#game-over").innerText = "Game Over";
+}
 
+function determineLowScore() {
   lowScore = +localStorage.getItem("low-score") || Infinity;
+  
   if (currentScore < lowScore) {
     document.querySelector("#final-score").innerText += " - NEW BEST SCORE!";
     localStorage.setItem("low-score", currentScore);
@@ -125,8 +127,15 @@ function endGame() {
     document.querySelector("#current-score").innerText = "";
     document.querySelector("#final-score").innerText += ` (Your best score was ${lowScore})`;
   }
-  document.querySelector("#final-score").classList.add("game-over");
+}
+
+function endGame() {
+  finalScore = currentScore;
+
+  printGameEndMsg();
+  determineLowScore();
   
+  document.querySelector("#final-score").classList.add("game-over");
 }
 
 createDivsForColors(shuffledColors);
