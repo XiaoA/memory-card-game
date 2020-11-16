@@ -2,6 +2,10 @@ const gameContainer = document.getElementById("game");
 let firstCard = null;
 let secondCard = null;
 let preventClicks = false;
+let revealedCards = 0;
+let currentScore = 0;
+let lowScore = localStorage.getItem("low-score")
+let finalScore = 0;
 
 const COLORS = [
   "red",
@@ -15,6 +19,8 @@ const COLORS = [
   "orange",
   "purple"
 ];
+
+const deckCount = COLORS.length;
 
 function shuffle(array) {
   let counter = array.length;
@@ -47,8 +53,10 @@ function createDivsForColors(colorArray) {
 const chooseCards = function(chosenCard) {
   if (firstCard === null) {
     firstCard = chosenCard;
+    setScore(currentScore + 1);
   } else if (secondCard === null) {
     secondCard = chosenCard;
+    setScore(currentScore + 1);
   }
 
   if (firstCard && secondCard) {
@@ -61,6 +69,7 @@ const chooseCards = function(chosenCard) {
 
 const checkForMatch = function() {
   if (firstCard.className === secondCard.className) {
+    revealedCards += 2;
     removeEventListener();
     preventClicks = false;
   } else {
@@ -91,9 +100,33 @@ const forgetChosenCards = function() {
 function handleCardClick(event) {
   if (preventClicks) return;
   chosenCard = event.target;
-
+  
   chooseCards(chosenCard);
   checkForMatch();
+
+  if (revealedCards === deckCount) { endGame() };
+}
+
+function setScore(newScore) {
+  currentScore = newScore;
+  document.querySelector("#current-score").innerText = `Current Score: ${currentScore}`;
+}
+
+function endGame() {
+  finalScore = currentScore
+  document.querySelector("#final-score").innerText = `Final Score: ${finalScore}`;
+  document.querySelector("#game-over").innerText = "Game Over";
+
+  lowScore = +localStorage.getItem("low-score") || Infinity;
+  if (currentScore < lowScore) {
+    document.querySelector("#final-score").innerText += " - NEW BEST SCORE!";
+    localStorage.setItem("low-score", currentScore);
+  } else {
+    document.querySelector("#current-score").innerText = "";
+    document.querySelector("#final-score").innerText += ` (Your best score was ${lowScore})`;
+  }
+  document.querySelector("#final-score").classList.add("game-over");
+  
 }
 
 createDivsForColors(shuffledColors);
