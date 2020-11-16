@@ -63,6 +63,7 @@ function resetOldGame() {
   document.querySelector("#current-score").innerHTML = "";
   document.querySelector("#final-score").innerHTML = "";
   document.querySelector("#game-over").innerHTML = "";
+  document.querySelector("#play-again").innerText = "";
 }
 
 function initializeNewGame() {
