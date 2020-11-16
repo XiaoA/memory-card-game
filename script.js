@@ -1,4 +1,5 @@
 const gameContainer = document.getElementById("game");
+const cards = document.querySelectorAll(".game-card");
 let firstCard = null;
 let secondCard = null;
 let preventClicks = false;
@@ -21,6 +22,13 @@ const COLORS = [
 ];
 
 const deckCount = COLORS.length;
+
+let startButton = document.querySelector("#btn-start-game");
+startButton.addEventListener("click", startGame);
+
+for(let card of cards){
+  card.addEventListener("click", handleCardClick);
+}
 
 function shuffle(array) {
   let counter = array.length;
@@ -48,6 +56,25 @@ function createDivsForColors(colorArray) {
 
     gameContainer.append(newDiv);
   }
+}
+
+function resetOldGame() {
+  setScore(0);
+  document.querySelector("#current-score").innerHTML = "";
+  document.querySelector("#final-score").innerHTML = "";
+  document.querySelector("#game-over").innerHTML = "";
+}
+
+function initializeNewGame() {
+  let game = document.querySelector("#game");
+  game.innerHTML = "";
+  let newDeck = shuffle(COLORS);
+  createDivsForColors(newDeck);
+}
+
+function startGame() {
+  resetOldGame();
+  initializeNewGame();
 }
 
 const chooseCards = function(chosenCard) {
@@ -107,6 +134,7 @@ function handleCardClick(event) {
   if (revealedCards === deckCount) { endGame() };
 }
 
+
 function setScore(newScore) {
   currentScore = newScore;
   document.querySelector("#current-score").innerText = `Current Score: ${currentScore}`;
@@ -115,6 +143,7 @@ function setScore(newScore) {
 function printGameEndMsg() {
   document.querySelector("#final-score").innerText = `Final Score: ${finalScore}`;
   document.querySelector("#game-over").innerText = "Game Over";
+  document.querySelector("#play-again").innerText = "Would you like to play again?";
 }
 
 function determineLowScore() {
@@ -124,7 +153,7 @@ function determineLowScore() {
     document.querySelector("#final-score").innerText += " - NEW BEST SCORE!";
     localStorage.setItem("low-score", currentScore);
   } else {
-    document.querySelector("#current-score").innerText = "";
+    document.querySelector("#current-score").innerHTML = "";
     document.querySelector("#final-score").innerText += ` (Your best score was ${lowScore})`;
   }
 }
@@ -134,8 +163,6 @@ function endGame() {
 
   printGameEndMsg();
   determineLowScore();
-  
-  document.querySelector("#final-score").classList.add("game-over");
 }
 
 createDivsForColors(shuffledColors);
