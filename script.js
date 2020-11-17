@@ -135,7 +135,6 @@ function handleCardClick(event) {
   if (revealedCards === deckCount) { endGame() };
 }
 
-
 function setScore(newScore) {
   currentScore = newScore;
   document.querySelector("#current-score").innerText = `Current Score: ${currentScore}`;
@@ -144,7 +143,7 @@ function setScore(newScore) {
 function printGameEndMsg() {
   document.querySelector("#final-score").innerText = `Final Score: ${finalScore}`;
   document.querySelector("#game-over").innerText = "Game Over";
-   document.querySelector("#play-again").innerText += "Would you like to play again?";
+  document.querySelector("#play-again-text").innerText += "Would you like to play again?";
 }
 
 function determineLowScore() {
