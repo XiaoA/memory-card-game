@@ -60,9 +60,9 @@ function createDivsForColors(colorArray) {
 
 function resetOldGame() {
   setScore(0);
-  document.querySelector("#current-score").innerHTML = "";
-  document.querySelector("#final-score").innerHTML = "";
-  document.querySelector("#game-over").innerHTML = "";
+  document.querySelector("#current-score").innerText = "";
+  document.querySelector("#final-score").innerText = "";
+  document.querySelector("#game-over").innerText = "";
   document.querySelector("#play-again").innerText = "";
 }
 
@@ -144,7 +144,7 @@ function setScore(newScore) {
 function printGameEndMsg() {
   document.querySelector("#final-score").innerText = `Final Score: ${finalScore}`;
   document.querySelector("#game-over").innerText = "Game Over";
-  document.querySelector("#play-again").innerText = "Would you like to play again?";
+   document.querySelector("#play-again").innerText += "Would you like to play again?";
 }
 
 function determineLowScore() {
@@ -154,7 +154,7 @@ function determineLowScore() {
     document.querySelector("#final-score").innerText += " - NEW BEST SCORE!";
     localStorage.setItem("low-score", currentScore);
   } else {
-    document.querySelector("#current-score").innerHTML = "";
+    document.querySelector("#current-score").innerText = "";
     document.querySelector("#final-score").innerText += ` (Your best score was ${lowScore})`;
   }
 }
@@ -162,7 +162,7 @@ function determineLowScore() {
 function endGame() {
   finalScore = currentScore;
 
-  printGameEndMsg();
+   printGameEndMsg();
   determineLowScore();
 }
 
