@@ -60,10 +60,12 @@ function createDivsForColors(colorArray) {
 
 function resetOldGame() {
   setScore(0);
+  revealedCards = 0;
+  lowScore = 0;
   document.querySelector("#current-score").innerText = "";
   document.querySelector("#final-score").innerText = "";
   document.querySelector("#game-over").innerText = "";
-  document.querySelector("#play-again").innerText = "";
+  document.querySelector("#play-again-text").innerText = "";
 }
 
 function initializeNewGame() {
@@ -107,6 +109,7 @@ const checkForMatch = function() {
     }, 1000);
   }
 }
+
 
 const removeEventListener = function() {
   firstCard.removeEventListener('click', handleCardClick);
@@ -160,8 +163,7 @@ function determineLowScore() {
 
 function endGame() {
   finalScore = currentScore;
-
-   printGameEndMsg();
+  printGameEndMsg();
   determineLowScore();
 }
 
