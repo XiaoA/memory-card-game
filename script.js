@@ -87,6 +87,8 @@ const chooseCards = function(chosenCard) {
   } else if (secondCard === null) {
     secondCard = chosenCard;
     setScore(currentScore + 1);
+  } else {
+    throw new Error("Illegal action. You can only choose two cards at a time.");
   }
 
   if (firstCard && secondCard) {
