@@ -60,10 +60,12 @@ function createDivsForColors(colorArray) {
 
 function resetOldGame() {
   setScore(0);
+  revealedCards = 0;
+  lowScore = 0;
   document.querySelector("#current-score").innerText = "";
   document.querySelector("#final-score").innerText = "";
   document.querySelector("#game-over").innerText = "";
-  document.querySelector("#play-again").innerText = "";
+  document.querySelector("#play-again-text").innerText = "";
 }
 
 function initializeNewGame() {
@@ -79,32 +81,36 @@ function startGame() {
 }
 
 const chooseCards = function(chosenCard) {
-  if (firstCard === null) {
-    firstCard = chosenCard;
-    setScore(currentScore + 1);
-  } else if (secondCard === null) {
-    secondCard = chosenCard;
-    setScore(currentScore + 1);
-  }
+    if (firstCard === null) {
+      firstCard = chosenCard;
+      setScore(currentScore + 1);
+    } else if (secondCard === null) {
+      secondCard = chosenCard;
+      setScore(currentScore + 1);
+    } else {
+      throw new Error("Illegal action. You can only choose two cards at a time.");
+    }
 
-  if (firstCard && secondCard) {
-    preventClicks = true;
+    if (firstCard && secondCard) {
+      preventClicks = true;
+    }
+    
+    chosenCard.classList.add("revealed");
+    chosenCard.style.backgroundColor = chosenCard.classList[0];
   }
-  
-  chosenCard.classList.add("revealed");
-  chosenCard.style.backgroundColor = chosenCard.classList[0];
-}
 
 const checkForMatch = function() {
-  if (firstCard.className === secondCard.className) {
-    revealedCards += 2;
-    removeEventListener();
-    preventClicks = false;
-  } else {
-    setTimeout(function() {
-      forgetChosenCards();
+  if (firstCard && secondCard !== null) {
+    if (firstCard.className === secondCard.className) {
+      revealedCards += 2;
+      removeEventListener();
       preventClicks = false;
-    }, 1000);
+    } else {
+      setTimeout(function() {
+        forgetChosenCards();
+        preventClicks = false;
+      }, 1000);
+    }
   }
 }
 
@@ -160,8 +166,7 @@ function determineLowScore() {
 
 function endGame() {
   finalScore = currentScore;
-
-   printGameEndMsg();
+  printGameEndMsg();
   determineLowScore();
 }
 
