@@ -1,4 +1,12 @@
 const gameContainer = document.getElementById("game");
+const cards = document.querySelectorAll(".game-card");
+let firstCard = null;
+let secondCard = null;
+let preventClicks = false;
+let revealedCards = 0;
+let currentScore = 0;
+let lowScore = localStorage.getItem("low-score")
+let finalScore = 0;
 
 const COLORS = [
   "red",
@@ -13,21 +21,22 @@ const COLORS = [
   "purple"
 ];
 
-// here is a helper function to shuffle an array
-// it returns the same array with values shuffled
-// it is based on an algorithm called Fisher Yates if you want ot research more
+const deckCount = COLORS.length;
+
+let startButton = document.querySelector("#btn-start-game");
+startButton.addEventListener("click", startGame);
+
+for(let card of cards){
+  card.addEventListener("click", handleCardClick);
+}
+
 function shuffle(array) {
   let counter = array.length;
 
-  // While there are elements in the array
   while (counter > 0) {
-    // Pick a random index
     let index = Math.floor(Math.random() * counter);
-
-    // Decrease counter by 1
     counter--;
 
-    // And swap the last element with it
     let temp = array[counter];
     array[counter] = array[index];
     array[index] = temp;
@@ -38,30 +47,127 @@ function shuffle(array) {
 
 let shuffledColors = shuffle(COLORS);
 
-// this function loops over the array of colors
-// it creates a new div and gives it a class with the value of the color
-// it also adds an event listener for a click for each card
 function createDivsForColors(colorArray) {
   for (let color of colorArray) {
-    // create a new div
     const newDiv = document.createElement("div");
 
-    // give it a class attribute for the value we are looping over
     newDiv.classList.add(color);
-
-    // call a function handleCardClick when a div is clicked on
     newDiv.addEventListener("click", handleCardClick);
 
-    // append the div to the element with an id of game
     gameContainer.append(newDiv);
   }
 }
 
-// TODO: Implement this function!
-function handleCardClick(event) {
-  // you can use event.target to see which element was clicked
-  console.log("you just clicked", event.target);
+function resetOldGame() {
+  setScore(0);
+  revealedCards = 0;
+  lowScore = 0;
+  document.querySelector("#current-score").innerText = "";
+  document.querySelector("#final-score").innerText = "";
+  document.querySelector("#game-over").innerText = "";
+  document.querySelector("#play-again-text").innerText = "";
 }
 
-// when the DOM loads
+function initializeNewGame() {
+  let game = document.querySelector("#game");
+  game.innerHTML = "";
+  let newDeck = shuffle(COLORS);
+  createDivsForColors(newDeck);
+}
+
+function startGame() {
+  resetOldGame();
+  initializeNewGame();
+}
+
+const chooseCards = function(chosenCard) {
+    if (firstCard === null) {
+      firstCard = chosenCard;
+      setScore(currentScore + 1);
+    } else if (secondCard === null) {
+      secondCard = chosenCard;
+      setScore(currentScore + 1);
+    } else {
+      throw new Error("Illegal action. You can only choose two cards at a time.");
+    }
+
+    if (firstCard && secondCard) {
+      preventClicks = true;
+    }
+    
+    chosenCard.classList.add("revealed");
+    chosenCard.style.backgroundColor = chosenCard.classList[0];
+  }
+
+const checkForMatch = function() {
+  if (firstCard && secondCard !== null) {
+    if (firstCard.className === secondCard.className) {
+      revealedCards += 2;
+      removeEventListener();
+      preventClicks = false;
+    } else {
+      setTimeout(function() {
+        forgetChosenCards();
+        preventClicks = false;
+      }, 1000);
+    }
+  }
+}
+
+const removeEventListener = function() {
+  firstCard.removeEventListener('click', handleCardClick);
+  secondCard.removeEventListener('click', handleCardClick);
+  firstCard = null;
+  secondCard = null;
+}
+
+const forgetChosenCards = function() {
+  firstCard.style.backgroundColor = null;
+  firstCard.classList.remove("revealed");
+  firstCard = null;
+
+  secondCard.style.backgroundColor = null;
+  secondCard.classList.remove("revealed");
+  secondCard = null;
+}
+
+function handleCardClick(event) {
+  if (preventClicks) return;
+  chosenCard = event.target;
+  
+  chooseCards(chosenCard);
+  checkForMatch();
+
+  if (revealedCards === deckCount) { endGame() };
+}
+
+function setScore(newScore) {
+  currentScore = newScore;
+  document.querySelector("#current-score").innerText = `Current Score: ${currentScore}`;
+}
+
+function printGameEndMsg() {
+  document.querySelector("#final-score").innerText = `Final Score: ${finalScore}`;
+  document.querySelector("#game-over").innerText = "Game Over";
+  document.querySelector("#play-again-text").innerText += "Would you like to play again?";
+}
+
+function determineLowScore() {
+  lowScore = +localStorage.getItem("low-score") || Infinity;
+  
+  if (currentScore < lowScore) {
+    document.querySelector("#final-score").innerText += " - NEW BEST SCORE!";
+    localStorage.setItem("low-score", currentScore);
+  } else {
+    document.querySelector("#current-score").innerText = "";
+    document.querySelector("#final-score").innerText += ` (Your best score was ${lowScore})`;
+  }
+}
+
+function endGame() {
+  finalScore = currentScore;
+  printGameEndMsg();
+  determineLowScore();
+}
+
 createDivsForColors(shuffledColors);
